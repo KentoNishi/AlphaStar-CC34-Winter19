@@ -31,6 +31,10 @@ bool isPrime(int number) {
 
 int main() {
     cin >> D >> N;
+    if(N<pow(10,D-1)){
+        N=pow(10,D*2-1);
+    }
+    // cout << "Starting at " << N << endl;
     while (true) {
         int digits = to_string(N).size();
         for (int i = D; i <= digits - D; i++) {
