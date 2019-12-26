@@ -1,3 +1,43 @@
+/*
+Wonderprime Brands
+==================
+
+The cows are forever competing to see who has the best brand. The
+latest rage is brands that are 'Wonderprimes'. You probably already
+know that a brand consists of a sequence of digits that does not
+begin with 0; brands actually look a lot like positive integers.
+
+A wonderprime is a number that can be partitioned into two prime
+numbers, each of which has at least D digits and, of course, doesn't
+start with 0. When D=2, the number 11329 is a wonderprime (since it
+connects 113 and 29, both of which are prime).
+
+Only a few of the cows have wonderprime brands, but they all want
+one. Your job is to find the first wonderprime greater than or equal
+to a supplied integer N (1 <= N <= 2,000,000,000). No integer greater
+than 2,000,000,000 will be required.
+
+PROBLEM NAME: wpb
+
+INPUT FORMAT:
+
+* Line 1: Two space-separated integers: D and N
+
+SAMPLE INPUT:
+
+2 11328
+
+
+OUTPUT FORMAT:
+
+* Line 1: A line that contains the first wonderprime no smaller than
+        N.
+
+SAMPLE OUTPUT:
+
+11329
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
