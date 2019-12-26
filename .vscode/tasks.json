@@ -4,21 +4,19 @@
         "options": {
             "shell": {
                 "executable": "bash.exe",
-                "args": [
-                    "-c"
-                ]
+                "args": ["-c"]
             },
-            "cwd": "${fileDirname}"
+            "cwd":"${fileDirname}"
         }
     },
     "tasks": [
         {
             "type": "shell",
-            "label": "USACO Tests",
+            "label": "JOI Tests",
             "windows": {
                 "command": "cmd.exe",
                 "options": {
-                    "cwd": "C:\\Users\\kento\\OneDrive\\Files\\Documents\\GitHub\\USACO-Grader"
+                    "cwd": "C:\\Users\\kento\\OneDrive\\Files\\Documents\\GitHub\\AlphaStar-CC34-Winter19"
                 },
                 "args": [
                     "/c",
@@ -32,7 +30,7 @@
                 "isDefault": true
             }
         }
-    ] /*,
+    ]/*,
     "tasks": [
         {
             "label": "Build on WSL",

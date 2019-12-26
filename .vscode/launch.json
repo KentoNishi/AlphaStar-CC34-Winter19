@@ -10,9 +10,9 @@
             "stopAtEntry": false,
             "cwd": ".",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "pipeTransport": {
-                "debuggerPath": "cd $(wslpath '${fileDirname}') && g++ ${fileBasename} -o result -g -Wall && stdbuf -i0 -o0 -e0 gdb",
+                "debuggerPath": "cd $(wslpath '${fileDirname}') && g++ ${fileBasename} -o result -g -Wall && stdbuf -i0 -o0 -e0 gdb --ex=\"run < input.in\"",
                 "pipeProgram": "${env:windir}\\system32\\bash.exe",
                 "pipeArgs": [
                     "-c"
@@ -28,7 +28,7 @@
             ],
             "sourceFileMap": {
                 "\\mnt\\c": "C:\\",
-                "\\usr": "C:\\Users\\kento\\AppData\\Local\\Packages\\TheDebianProject.DebianGNULinux_76v4gfsz19hv4\\LocalState\\rootfs\\usr",
+                "\\usr\\": "C:\\users\\kento\\AppData\\Local\\Packages\\TheDebianProject.DebianGNULinux_76v4gfsz19hv4\\LocalState\\rootfs\\usr"
             }
         }
     ]
