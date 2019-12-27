@@ -93,11 +93,13 @@ int main() {
         auto point = current.find(e.second);
         if (point != current.end()) {
             // exists
-            current.erase(point);
+            while (current.size() > 0) {
+                current.erase(current.begin());
+            }
+            ans++;
         } else {
             current.emplace(e.second);
         }
-        ans = max(ans, (int)current.size());
     }
     cout << ans << endl;
     return 0;
