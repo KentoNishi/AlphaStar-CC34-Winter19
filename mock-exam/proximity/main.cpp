@@ -59,38 +59,17 @@ int N, K;
 
 int main() {
     cin >> N >> K;
-    vector<int> line = vector<int>(N);
-    set<int> types;
-    map<int, int> typeMap;
-    for (int i = 0; i < N; i++) {
-        cin >> line[i];
-        types.emplace(line[i]);
-    }
-    for (int i = 0; i < N; i++) {
-        int orig = line[i];
-        line[i] = distance(types.begin(), find(types.begin(), types.end(), line[i]));
-        typeMap[line[i]] = orig;
-    }
-    vector<vector<int>> toLeft = vector<vector<int>>(types.size(), vector<int>(N + 1));
-    for (int i = 0; i < N; i++) {
-        toLeft[line[i]][i + 1] = 1;
-    }
-    for (int i = 0; i < N; i++) {
-        for (int k = 0; k < types.size(); k++) {
-            toLeft[k][i + 1] += toLeft[k][i];
-        }
-    } /*
-    for (int i = 0; i < N; i++) {
-        for (int k = 0; k < types.size(); k++) {
-            cout << toLeft[k][i] << " ";
-        }
-        cout << endl;
-    }*/
+    map<int, int> prev;
     int ans = -1;
-    for (int i = 1; i < N; i++) {
-        if (toLeft[line[i]][i - K] != toLeft[line[i]][i]) {
-            ans = max(ans, typeMap[line[i]]);
+    for (int i = 0; i < N; i++) {
+        int a;
+        cin >> a;
+        if (prev.count(a) > 0) {
+            if (i - prev[a] <= K) {
+                ans = max(ans, a);
+            }
         }
+        prev[a] = i;
     }
     cout << ans << endl;
     return 0;

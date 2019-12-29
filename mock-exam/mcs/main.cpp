@@ -99,11 +99,13 @@ int main() {
     start.second--;
     end.first--;
     end.second--;
+    vector<vector<vector<bool>>> states = vector<vector<vector<bool>>>(R, vector<vector<bool>>(C, vector<bool>(2)));
     queue<pair<pair<int, int>, int>> toVisit;
     toVisit.emplace(pair<pair<int, int>, int>(start, 0));
     while (toVisit.size() > 0) {
         pair<pair<int, int>, int> top = toVisit.front();
         toVisit.pop();
+        states[top.first.first][top.first.second][top.second % 2] = true;
         if (top.first.first >= R || top.first.second >= C || top.first.first < 0 || top.first.second < 0) {
             continue;
         }
@@ -114,17 +116,21 @@ int main() {
         if (top.second % 2 == 0) {
             for (int i = 0; i < 8; i++) {
                 pair<int, int> p = make_pair(top.first.first + oddDR[i], top.first.second + oddDC[i]);
-                if (p.first >= R || p.second >= C || p.first < 0 || p.second < 0) {
+                if (p.first >= R || p.second >= C || p.first < 0 || p.second < 0 ||
+                    states[p.first][p.second][(top.second + 1) % 2]) {
                     continue;
                 }
+                states[p.first][p.second][(top.second + 1) % 2] = true;
                 toVisit.emplace(make_pair(p, top.second + 1));
             }
         } else {
             for (int i = 0; i < 4; i++) {
                 pair<int, int> p = make_pair(top.first.first + evenDR[i], top.first.second + evenDC[i]);
-                if (p.first >= R || p.second >= C || p.first < 0 || p.second < 0) {
+                if (p.first >= R || p.second >= C || p.first < 0 || p.second < 0 ||
+                    states[p.first][p.second][(top.second + 1) % 2]) {
                     continue;
                 }
+                states[p.first][p.second][(top.second + 1) % 2] = true;
                 toVisit.emplace(make_pair(p, top.second + 1));
             }
         }
