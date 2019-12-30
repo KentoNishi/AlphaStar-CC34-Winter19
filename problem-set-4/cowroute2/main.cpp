@@ -71,48 +71,51 @@ from city 3 to city 2.
 using namespace std;
 
 int main() {
-    int startingCity, endingCity, N;
-    cin >> startingCity >> endingCity >> N;
-    int cities[505];
-    int MtoB[10001];
-    int AtoM[10001];
-    int ans = 10000000;
-    int numCities = -1;
+    int AtoM[10001] = {INT_MAX};
+    int MtoB[10001] = {INT_MAX};
+    int pointA, pointB, N;
+    cin >> pointA >> pointB >> N;
     for (int i = 0; i < 10001; i++) {
-        AtoM[i] = 10000000;
-        MtoB[i] = 10000000;
+        AtoM[i] = 1000;
+        MtoB[i] = 1000;
     }
-    AtoM[startingCity] = 0;
-    MtoB[endingCity] = 0;
+    AtoM[pointA] = 0;
+    MtoB[pointB] = 0;
+    int maxCity = 0;
     for (int i = 0; i < N; i++) {
-        int cost, num;
-        cin >> cost >> num;
-        int Aindex = 10000000;
+        int cost, cityCount;
+        cin >> cost >> cityCount;
+        int cities[cityCount];
+        int Aindex = cityCount;
         int Bindex = -1;
-        for (int k = 0; k < num; k++) {
-            cin >> cities[k];
-            numCities = max(cities[k], numCities);
-            if (cities[k] == startingCity) {
-                Aindex = k;
+        for (int j = 0; j < cityCount; j++) {
+            cin >> cities[j];
+            maxCity = max(maxCity, cities[j]);
+            if (cities[j] == pointA) {
+                Aindex = j;
             }
-            if (cities[k] == endingCity) {
-                Bindex = k;
+            if (cities[j] == pointB) {
+                Bindex = j;
             }
         }
-        for (int k = Aindex + 1; k < num; k++) {
-            AtoM[cities[k]] = min(AtoM[cities[k]], cost);
+        if (Aindex < Bindex) {
+            AtoM[pointB] = min(AtoM[pointB], cost);
         }
-        for (int k = Bindex - 1; k >= 0; k--) {
-            MtoB[cities[k]] = min(MtoB[cities[k]], cost);
+        for (int j = Aindex; j < cityCount; j++) {
+            AtoM[cities[j]] = min(AtoM[cities[j]], cost);
+        }
+        for (int j = Bindex - 1; j >= 0; j--) {
+            MtoB[cities[j]] = min(MtoB[cities[j]], cost);
         }
     }
-    for (int i = 0; i < numCities + 1; i++) {
-        //cout << i << ": " << AtoM[i] << "," << MtoB[i] << endl;
-        ans = min(AtoM[i] + MtoB[i], ans);
+    int ans = INT_MAX;
+    for (int i = 0; i < maxCity + 1; i++) {
+        if (AtoM[i] != INT_MAX && MtoB[i] != INT_MAX) {
+            ans = min(ans, AtoM[i] + MtoB[i]);
+        }
     }
-    if (ans == 10000000) {
-        cout << -1 << endl;
-        return 0;
+    if (ans == INT_MAX) {
+        ans = -1;
     }
     cout << ans << endl;
     return 0;
