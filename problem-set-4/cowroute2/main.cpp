@@ -71,13 +71,13 @@ from city 3 to city 2.
 using namespace std;
 
 int main() {
-    int AtoM[10001] = {INT_MAX};
-    int MtoB[10001] = {INT_MAX};
+    int AtoM[10001];
+    int MtoB[10001];
     int pointA, pointB, N;
     cin >> pointA >> pointB >> N;
     for (int i = 0; i < 10001; i++) {
-        AtoM[i] = 1000;
-        MtoB[i] = 1000;
+        AtoM[i] = INT_MAX;
+        MtoB[i] = INT_MAX;
     }
     AtoM[pointA] = 0;
     MtoB[pointB] = 0;
