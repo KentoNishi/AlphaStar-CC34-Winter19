@@ -68,6 +68,81 @@ same time.
 #include <bits/stdc++.h>
 using namespace std;
 
+int N, M;
+
+struct Edge {
+    int bessie;
+    int elsie;
+    int to;
+};
+
+struct Node {
+    int height;
+    vector<Edge> edges;
+};
+
+vector<Node> graph;
+
+struct State {
+    int node;
+    int time;
+    State(int n, int t) {
+        node = n;
+        time = t;
+    }
+};
+
+int ans = INT_MAX;
+
+void findPaths(set<int> &times, bool bessie) {
+    queue<State> todo;
+    todo.emplace(0, 0);
+    while (todo.size() > 0) {
+        State top = todo.front();
+        todo.pop();
+        // cout << (bessie?"bessie":"elsie") << " is at " << top.node << " at time " << top.time << endl;
+        for (auto &edge : graph[top.node].edges) {
+            if (bessie) {
+                int totalTime = top.time + edge.bessie;
+                if (edge.to == N - 1) {
+                    times.insert(totalTime);
+                } else {
+                    todo.emplace(edge.to, totalTime);
+                }
+            } else {
+                int totalTime = top.time + edge.elsie;
+                if (edge.to == N - 1) {
+                    if (times.find(totalTime) != times.end()) {
+                        ans = min(ans, totalTime);
+                    }
+                } else {
+                    todo.emplace(edge.to, totalTime);
+                }
+            }
+        }
+    }
+}
+
 int main() {
+    cin >> N >> M;
+    graph = vector<Node>(N);
+    for (int i = 0; i < M; i++) {
+        int a, b, c, d;
+        cin >> a >> b >> c >> d;
+        a--;
+        b--;
+        int from = a;
+        int to = b;
+        Edge edge = {c, d, to};
+        graph[from].edges.push_back(edge);
+    }
+    set<int> times;
+    findPaths(times, true);
+    findPaths(times, false);
+    if (ans == INT_MAX) {
+        cout << "IMPOSSIBLE" << endl;
+    } else {
+        cout << ans << endl;
+    }
     return 0;
 }
