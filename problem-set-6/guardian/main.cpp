@@ -57,6 +57,73 @@ height 1 on the right top corner.
 #include <bits/stdc++.h>
 using namespace std;
 
+int N, M;
+
+struct Pixel {
+    int height;
+    bool visited;
+};
+
+vector<vector<Pixel>> grid;
+
+struct State {
+    int x;
+    int y;
+    int h;
+    State(int px, int py, int ph) {
+        x = px;
+        y = py;
+        h = ph;
+    }
+};
+
 int main() {
+    cin >> N >> M;
+    grid = vector<vector<Pixel>>(N, vector<Pixel>(M));
+    for (int x = 0; x < N; x++) {
+        for (int y = 0; y < M; y++) {
+            cin >> grid[x][y].height;
+        }
+    }
+    int dx[] = {0, 0, 1, -1, 1, -1, -1, 1};
+    int dy[] = {1, -1, 0, 0, 1, -1, 1, -1};
+    int ans = 0;
+    for (int x = 0; x < N; x++) {
+        for (int y = 0; y < M; y++) {
+            if (!grid[x][y].visited) {
+                bool hilltop = true;
+                queue<State> todo;
+                todo.emplace(x, y, grid[x][y].height);
+                while (todo.size() > 0) {
+                    State top = todo.front();
+                    todo.pop();
+                    // cout << top.x << "," << top.y << endl;
+                    for (int i = 0; i < 8; i++) {
+                        int nx = top.x + dx[i];
+                        int ny = top.y + dy[i];
+                        if (nx >= N || nx < 0 || ny >= M || ny < 0) {
+                            continue;
+                        }
+                        if (grid[nx][ny].height != top.h) {
+                            if (grid[nx][ny].height > top.h) {
+                                // cout << "+++ " << nx << "," << ny << " is " << grid[nx][ny].height << ", which is taller than " << top.x << "," << top.y << " which is " << top.h << endl;
+                                hilltop = false;
+                            }
+                            continue;
+                        }
+                        if (!grid[nx][ny].visited) {
+                            todo.emplace(nx, ny, top.h);
+                            grid[nx][ny].visited = true;
+                        }
+                    }
+                }
+                if (hilltop) {
+                    // cout << "Region from " << x << "," << y << " is a hilltop" << endl;
+                    ans++;
+                }
+            }
+        }
+    }
+    cout << ans << endl;
     return 0;
 }
