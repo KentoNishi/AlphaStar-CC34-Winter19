@@ -105,6 +105,75 @@ SAMPLE OUTPUT:
 #include <bits/stdc++.h>
 using namespace std;
 
+vector<vector<int>> grid;
+
+int W, H;
+
+pair<int, int> coordsOfMax(pair<int, int> pa, pair<int, int> pb, pair<int, int> pc) {
+    pair<int,int> maximum=pa;
+    if(grid[pb.first][pb.second]>grid[maximum.first][maximum.second]){
+        maximum=pb;
+    }
+    if(grid[pc.first][pc.second]>grid[maximum.first][maximum.second]){
+        maximum=pc;
+    }
+    return maximum;
+}
+
 int main() {
+    cin >> W >> H;
+    grid = vector<vector<int>>(H, vector<int>(W));
+    for (int x = 0; x < H; x++) {
+        for (int y = 0; y < W; y++) {
+            cin >> grid[x][y];
+        }
+    }
+    int lockedR = 0;
+    int lockedC = 0;
+    while (lockedR <= H && lockedC <= W) {
+        int indexOfMaxInCol = lockedR;
+        for (int i = lockedR + 1; i < H; i++) {
+            if (grid[i][lockedC] > grid[indexOfMaxInCol][lockedC]) {
+                indexOfMaxInCol = i;
+            }
+        }
+        int indexOfMaxInRow = lockedC;
+        for (int i = lockedC + 1; i < W; i++) {
+            if (grid[lockedR][i] > grid[lockedR][indexOfMaxInRow]) {
+                indexOfMaxInRow = i;
+            }
+        }
+        pair<int, int> locationOfMaxInGrid = {lockedR, lockedC};
+        for (int x = lockedR; x < H; x++) {
+            for (int y = lockedC; y < W; y++) {
+                if (grid[x][y] > grid[locationOfMaxInGrid.first][locationOfMaxInGrid.second]) {
+                    locationOfMaxInGrid.first = x;
+                    locationOfMaxInGrid.second = y;
+                }
+            }
+        }
+        /*
+        cout << indexOfMaxInCol << "," << lockedC << endl;
+        cout << lockedR << "," << indexOfMaxInRow << endl;
+        cout << locationOfMaxInGrid.first << "," << locationOfMaxInGrid.second << endl;
+        */
+        // maximum is either {indexOfMaxInCol,lockedC}, {lockedR,indexOfMaxInRow}, locationOfMaxInGrid
+        pair<int, int> locationOfMaximum = coordsOfMax({indexOfMaxInCol, lockedC}, {lockedR, indexOfMaxInRow}, locationOfMaxInGrid);
+        cout << locationOfMaximum.first << "," << locationOfMaximum.second << endl;
+        if(locationOfMaximum.first<lockedR){
+            // can only move col
+            // shift the locationOfMaximum.second to lockedC
+            lockedC++;
+        }else if(locationOfMaximum.second<lockedC){
+            // can only move row
+            // shift the locationOfMaximum.first to lockedR
+            lockedR++;
+        }else{
+            // can move both
+            lockedC++;
+            lockedR++;
+        }
+        break;
+    }
     return 0;
 }
