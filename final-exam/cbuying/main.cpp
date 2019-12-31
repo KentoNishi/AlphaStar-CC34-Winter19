@@ -78,26 +78,23 @@ int main() {
         cin >> stocks[i].first >> stocks[i].second;
     }
     sort(stocks.begin(), stocks.end());
-    long long spent = 0;
+    // sorted by price
+    long long money = B;
     long long current = 0;
     long long satisfied = 0;
-    while (spent <= B) {
-        long long allowance = B - spent;
+    while (true) {
         long long price = stocks[current].first;
-        long long purchase;
+        long long canBuy = stocks[current].second;
         if (price != 0) {
-            purchase = min(allowance / price, stocks[current].second);
-        } else {
-            purchase = stocks[current].second;
+            canBuy = min(canBuy, money / price);
         }
-        if (purchase != 0) {
-            spent += purchase * price;
-            satisfied += purchase;
-            current++;
-        } else {
-            break;
+        money -= canBuy * price;
+        satisfied += canBuy;
+        if (canBuy != stocks[current].second || current == N - 1) {
+            cout << satisfied << endl;
+            return 0;
         }
+        current++;
     }
-    cout << satisfied << endl;
     return 0;
 }
