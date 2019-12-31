@@ -52,115 +52,88 @@ SAMPLE OUTPUT:
 
 #include <bits/stdc++.h>
 using namespace std;
-
-int dirToIndex(int dr, int dc) {
-    if (dr == 1) {
-        return 3;
-    }
-    if (dr == -1) {
-        return 1;
-    }
-    if (dc == 1) {
-        return 0;
-    }
-    return 2;
-}
-
 int N, K, R;
 
-int main() {
-    cin >> N >> K >> R;
-    bool cow[N][N];
-    bool visited[N][N];
-    bool blocked[N][N][4];
-    for (int i = 0; i < N; i++) {
-        for (int k = 0; k < N; k++) {
-            visited[i][k] = false;
-            cow[i][k] = false;
-            for (int j = 0; j < 4; j++) {
-                blocked[i][k][j]=false;
+struct Pixel {
+    vector<pair<int, int>> blocked;
+    bool cow;
+    bool visited;
+};
+
+vector<vector<Pixel>> grid;
+
+bool isBlocked(vector<pair<int, int>> arr, int r, int c) {
+    for (auto &p : arr) {
+        if (p.first == r && p.second == c) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void floodFill(int r, int c, int &cowCount) {
+    queue<pair<int, int>> todo;
+    todo.emplace(r, c);
+    int dx[] = {0, 0, -1, 1};
+    int dy[] = {-1, 1, 0, 0};
+    grid[r][c].visited = true;
+    while (todo.size() > 0) {
+        pair<int, int> top = todo.front();
+        todo.pop();
+        if (grid[top.first][top.second].cow) {
+            cowCount++;
+        }
+        for (int i = 0; i < 4; i++) {
+            int nx = dx[i] + top.first;
+            int ny = dy[i] + top.second;
+            if (nx >= 0 && ny >= 0 && nx < N && ny < N &&
+                !grid[nx][ny].visited &&
+                !isBlocked(grid[top.first][top.second].blocked, nx, ny)) {
+                todo.push(make_pair(nx, ny));
+                grid[nx][ny].visited = true;
             }
         }
     }
-    for (int i = 0; i < K; i++) {
-        int r1, c1, r2, c2;
-        cin >> r1 >> c1 >> r2 >> c2;
-        r1--;
-        c1--;
-        r2--;
-        c2--;
-        if (c1-c2 == 1) {
-            blocked[r1][c1][0] = true;
-            blocked[r2][c2][3] = true;
-        } else if (c2-c1 == 1) {
-            blocked[r1][c1][3] = true;
-            blocked[r2][c2][0] = true;
-        }
-        if (r1-r2 == 1) {
-            blocked[r1][c1][1] = true;
-            blocked[r2][c2][2] = true;
-        } else if (r2-r1 == 1) {
-            blocked[r1][c1][2] = true;
-            blocked[r2][c2][1] = true;
-        }
-    }
+}
+
+int main() {
+    cin >> N >> K >> R;
+    grid = vector<vector<Pixel>>(N, vector<Pixel>(N));
     for (int i = 0; i < R; i++) {
-        int r, c;
-        cin >> r >> c;
-        r--;
+        int a, b, c, d;
+        cin >> a >> b >> c >> d;
+        a--;
+        b--;
         c--;
-        cow[r][c] = true;
+        d--;
+        pair<int, int> p1 = {a, b};
+        pair<int, int> p2 = {c, d};
+        grid[a][b].blocked.push_back(p2);
+        grid[c][d].blocked.push_back(p1);
     }
-    int dr[] = {0, -1, 0, 1};
-    int dc[] = {1, 0, -1, 0};
-    vector<int> regions;
+    for (int i = 0; i < K; i++) {
+        int a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        grid[a][b].cow = true;
+    }
+    vector<int> cowCounts;
     for (int r = 0; r < N; r++) {
         for (int c = 0; c < N; c++) {
-            if (!visited[r][c]) {
-                int cowsInRegion = 0;
-                queue<pair<int, int>> todo;
-                todo.emplace(r, c);
-                while (todo.size() > 0) {
-                    int row, col;
-                    tie(row, col) = todo.front();
-                    todo.pop();
-                    visited[row][col] = true;
-                    if (cow[row][col]) {
-                        cowsInRegion++;
-                    }
-                    for (int k = 0; k < 4; k++) {
-                        if (row + dr[k] >= N || row + dr[k] < 0 || col + dc[k] >= N || col + dc[k] < 0) {
-                            continue;
-                        }
-                        cout << blocked[row][col][k] << endl;
-                        if (blocked[row][col][k]) {
-                            continue;
-                        }
-                        if (visited[row + dr[k]][col + dc[k]]) {
-                            continue;
-                        }
-                        todo.emplace(row + dr[k], col + dc[k]);
-                        visited[row + dr[k]][col + dc[k]] = true;
-                    }
+            if (!grid[r][c].visited) {
+                int cowCount = 0;
+                floodFill(r, c, cowCount);
+                if (cowCount > 0) {
+                    cowCounts.push_back(cowCount);
                 }
-                for (int a = 0; a < N; a++) {
-                    for (int b = 0; b < N; b++) {
-                        cout << visited[a][b] << " ";
-                    }
-                    cout << endl;
-                }
-                cout << "==========" << endl;
-                cout << cowsInRegion << endl;
-                regions.push_back(cowsInRegion);
             }
         }
     }
     int ans = 0;
-    for (int i = 0; i < regions.size(); i++) {
-        for (int k = i + 1; k < regions.size(); k++) {
-            ans += regions[i] * regions[k];
-        }
+    for (int i = 0; i < cowCounts.size(); i++) {
+        ans += cowCounts[i] * (K - cowCounts[i]);
     }
-    cout << ans << endl;
+    cout << ans / 2 << endl;
     return 0;
 }
