@@ -67,7 +67,6 @@ optimal solution.
 using namespace std;
 
 void addPoint(map<long long, long long> &map, long long point, long long num) {
-
     if (map.count(point) > 0) {
         map[point] += num;
         return;
