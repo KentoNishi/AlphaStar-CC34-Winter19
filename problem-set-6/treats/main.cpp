@@ -109,29 +109,22 @@ vector<vector<int>> grid;
 
 int W, H;
 
-pair<int, int> coordsOfMax(pair<int, int> pa, pair<int, int> pb, pair<int, int> pc) {
-    pair<int, int> maximum = pa;
-    if (grid[pb.first][pb.second] > grid[maximum.first][maximum.second]) {
-        maximum = pb;
-    }
-    if (grid[pc.first][pc.second] > grid[maximum.first][maximum.second]) {
-        maximum = pc;
-    }
-    return maximum;
-}
-
-void swapCol(int col1, int col2) {
-    for (int i = 0; i < H; i++) {
-        swap(grid[i][col1], grid[i][col2]);
-    }
-}
-
 void printGrid() {
     for (int r = 0; r < H; r++) {
         for (int c = 0; c < W; c++) {
             cout << grid[r][c] << " ";
         }
         cout << endl;
+    }
+}
+
+void swapRows(int r1, int r2) {
+    swap(grid[r1], grid[r2]);
+}
+
+void swapCols(int c1, int c2) {
+    for (int i = 0; i < H; i++) {
+        swap(grid[i][c1], grid[i][c2]);
     }
 }
 
@@ -145,63 +138,33 @@ int main() {
     }
     int lockedR = 0;
     int lockedC = 0;
-    while (lockedR < H && lockedC < W) {
-        //cout << "Locked region: " << lockedR << "," << lockedC << endl;
-        //cout << "Before swap:" << endl;
-        //printGrid();
-        // cout << lockedR << "," << lockedC << endl;
-        int indexOfMaxInCol = lockedR;
-        for (int i = lockedR + 1; i < H; i++) {
-            if (grid[i][lockedC] > grid[indexOfMaxInCol][lockedC]) {
-                indexOfMaxInCol = i;
-            }
-        }
-        int indexOfMaxInRow = lockedC;
-        for (int i = lockedC + 1; i < W; i++) {
-            if (grid[lockedR][i] > grid[lockedR][indexOfMaxInRow]) {
-                indexOfMaxInRow = i;
-            }
-        }
-        pair<int, int> locationOfMaxInGrid = {lockedR, lockedC};
-        for (int x = lockedR; x < H; x++) {
-            for (int y = lockedC; y < W; y++) {
-                if (grid[x][y] > grid[locationOfMaxInGrid.first][locationOfMaxInGrid.second]) {
-                    locationOfMaxInGrid.first = x;
-                    locationOfMaxInGrid.second = y;
+    while (lockedR < H || lockedC < W) {
+        pair<int, int> largest = {-1, -1};
+        for (int x = 0; x < H; x++) {
+            for (int y = 0; y < W; y++) {
+                if (x < lockedR && y < lockedC) {
+                    continue;
+                }
+                if ((largest.first == -1 && largest.second == -1) || grid[x][y] > grid[largest.first][largest.second]) {
+                    largest = {x, y};
                 }
             }
         }
-        /*
-        cout << indexOfMaxInCol << "," << lockedC << endl;
-        cout << lockedR << "," << indexOfMaxInRow << endl;
-        cout << locationOfMaxInGrid.first << "," << locationOfMaxInGrid.second << endl;
-        */
-        // maximum is either {indexOfMaxInCol,lockedC}, {lockedR,indexOfMaxInRow}, locationOfMaxInGrid
-        pair<int, int> locationOfMaximum = coordsOfMax({indexOfMaxInCol, lockedC}, {lockedR, indexOfMaxInRow}, locationOfMaxInGrid);
-        //cout << locationOfMaximum.first << "," << locationOfMaximum.second << endl;
-        if (locationOfMaximum.first < lockedR) {
-            // can only move col
-            // shift the locationOfMaximum.second to lockedC
-            swapCol(locationOfMaximum.second, lockedC);
-            lockedC++;
-        } else if (locationOfMaximum.second < lockedC) {
-            // can only move row
-            // shift the locationOfMaximum.first to lockedR
-            swap(grid[locationOfMaximum.first], grid[lockedR]);
+        //cout << largest.first << "," << largest.second << endl;
+        if (largest.first >= lockedR && largest.second >= lockedC) {
+            swapRows(largest.first, lockedR);
+            swapCols(largest.second, lockedC);
             lockedR++;
-        } else if (locationOfMaximum.first >= lockedR && locationOfMaximum.second >= lockedC) {
-            // can move both
-            swap(grid[locationOfMaximum.first], grid[lockedR]);
-            swapCol(locationOfMaximum.second, lockedC);
             lockedC++;
+        } else if (largest.first >= lockedR) {
+            swapRows(largest.first, lockedR);
             lockedR++;
-        } else {
-            break;
+        } else if (largest.second >= lockedC) {
+            swapCols(largest.second, lockedC);
+            lockedC++;
         }
-        //cout << "After swap:" << endl;
-        //printGrid();
+        // break;
     }
-    //cout << "Final grid:" << endl;
     printGrid();
     return 0;
 }
